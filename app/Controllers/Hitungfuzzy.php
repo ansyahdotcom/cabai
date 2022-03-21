@@ -5,17 +5,20 @@ namespace App\Controllers;
 use App\Models\NilaiAwalModel;
 use App\Models\HitungModel;
 use App\Models\PpmModel;
+use App\Models\CobaModel;
 
 class Hitungfuzzy extends BaseController
 {
     protected $NilaiAwalModel;
     protected $HitungModel;
     protected $PpmModel;
+    protected $CobaModel;
     public function __construct()
     {
         $this->NilaiAwalModel = new NilaiAwalModel;
         $this->HitungModel = new HitungModel;
         $this->PpmModel = new PpmModel;
+        $this->CobaModel = new CobaModel;
     }
 
     public function index()
@@ -38,7 +41,7 @@ class Hitungfuzzy extends BaseController
         // ];
         // $this->NilaiAwalModel->save($data_awal);
 
-        // AMBIL DATA RENTANG UMUR
+        // AMBIL DATA RENTANG PPM
         $get_ppm = $this->PpmModel->where('st_ppm', '1')->first();
         $ppm_rendah = $get_ppm['ppm_rendah'];
         $ppm_cukup_min = $get_ppm['ppm_cukup_min'];
@@ -133,7 +136,7 @@ class Hitungfuzzy extends BaseController
             $m_ph_ntral = ($ph - 6.5) / (6.7 - 6.5);
         } elseif (7.3 < $ph && $ph < 7.5) {
             $m_ph_ntral = (7.5 - $ph) / (7.5 - 7.3);
-        } elseif (6.7 < $ph && $ph < 7.3) {
+        } elseif (6.7 <= $ph && $ph <= 7.3) {
             $m_ph_ntral = 1;
         }
         // miu ph basa
@@ -167,6 +170,7 @@ class Hitungfuzzy extends BaseController
 
         // $z1 = 60 - ($a1 * (60 - 50));
         // $z2 = 60 - ($a2 * (60 - 50));
+        // INFERENSI
         $a1 = min($m_shu_nrmal, $m_ppm_rndah, $m_ph_asam); // kondisi kurang bagus
         $z1 = 50;
         $a2 = min($m_shu_nrmal, $m_ppm_rndah, $m_ph_ntral); // kondisi OK
@@ -204,14 +208,83 @@ class Hitungfuzzy extends BaseController
         $a18 = min($m_shu_pnas, $m_ppm_tnggi, $m_ph_basa); // kondisi kurang bagus
         $z18 = 50;
 
-
         // DEFUZZYFIKASI
         $total_AiZi = ($a1 * $z1) + ($a2 * $z2) + ($a3 * $z3) + ($a4 * $z4) + ($a5 * $z5) + ($a6 * $z6)
             + ($a7 * $z7) + ($a8 * $z8) + ($a9 * $z9) + ($a10 * $z10) + ($a11 * $z11) + ($a12 * $z12)
             + ($a13 * $z13) + ($a14 * $z14) + ($a15 * $z15) + ($a16 * $z16) + ($a17 * $z17) + ($a18 * $z18);
         $total_a = $a1 + $a2 + $a3 + $a4 + $a5 + $a6 + $a7 + $a8 + $a9 + $a10 + $a11 + $a12 + $a13 + $a14 + $a15 + $a16 + $a17 + $a18;
         $total_Z = $total_AiZi / $total_a;
-        
+
+        // INFERENSI SUHU
+        $suhu_a1 = $m_shu_nrmal;
+        $suhu_z1 = 50;
+        $suhu_a2 = $m_shu_pnas;
+        $suhu_z2 = 100;
+
+        // DEFUZZYFIKASI SUHU
+        $suhu_AiZi = ($suhu_a1 * $suhu_z1) + ($suhu_a2 * $suhu_z2);
+        $suhu_a = $suhu_a1 + $suhu_a2;
+        $suhu_Z = $suhu_AiZi / $suhu_a;
+
+        // PENENTUAN KONDISI SUHU
+        if ($suhu_Z <= 75) {
+            // $kondisi_suhu = "Kondisi suhu normal";
+            $st_suhu = 1;
+        } elseif ($suhu_Z > 75) {
+            // $kondisi_suhu = "Kondisi suhu panas";
+            $st_suhu = 0;
+        }
+
+        // INFERENSI PPM
+        $ppm_a1 = $m_ppm_rndah;
+        $ppm_z1 = 50;
+        $ppm_a2 = $m_ppm_ckup;
+        $ppm_z2 = 100;
+        $ppm_a3 = $m_ppm_tnggi;
+        $ppm_z3 = 150;
+
+        // DEFUZZYFIKASI PPM
+        $ppm_AiZi = ($ppm_a1 * $ppm_z1) + ($ppm_a2 * $ppm_z2) + ($ppm_a3 * $ppm_z3);
+        $ppm_a = $ppm_a1 + $ppm_a2 + $ppm_a3;
+        $ppm_Z = $ppm_AiZi / $ppm_a;
+
+        // PENENTUAN KONDISI PPM
+        if ($ppm_Z <= 50) {
+            // $kondisi_ppm = 'tambahkan nutrisi';
+            $st_ppm = 0;
+        } elseif ($ppm_Z > 50 && $ppm_Z < 150) {
+            // $kondisi_ppm = 'kondisi ok';
+            $st_ppm = 1;
+        } elseif ($ppm_Z > 150) {
+            // $kondisi_ppm = 'tambahkan air';
+            $st_ppm = 2;
+        }
+
+        // INFERENSI PH
+        $ph_a1 = $m_ph_asam;
+        $ph_z1 = 50;
+        $ph_a2 = $m_ph_ntral;
+        $ph_z2 = 100;
+        $ph_a3 = $m_ph_basa;
+        $ph_z3 = 150;
+
+        // DEFUZZYFIKASI PH
+        $ph_AiZi = ($ph_a1 * $ph_z1) + ($ph_a2 * $ph_z2) + ($ph_a3 * $ph_z3);
+        $ph_a = $ph_a1 + $ph_a2 + $ph_a3;
+        $ph_Z = $ph_AiZi / $ph_a;
+
+        // PENENTUAN KONDISI PH
+        if ($ph_Z <= 50) {
+            // $kondisi_ph = 'pH terlalu asam';
+            $st_ph = 0;
+        } elseif ($ph_Z > 50 && $ph_Z < 150) {
+            // $kondisi_ph = 'kondisi pH ok';
+            $st_ph = 1;
+        } elseif ($ph_Z >= 150) {
+            // $kondisi_ph = 'pH terlalu basa';
+            $st_ph = 2;
+        }
+
         $olah_data = [
             'id_ht' => 50,
             'm_shu_nrmal' => $m_shu_nrmal,
@@ -260,95 +333,74 @@ class Hitungfuzzy extends BaseController
             'z18' => $z18,
             'total_AiZi' => $total_AiZi,
             'total_a' => $total_a,
-            'total_Z' => $total_Z
+            'total_Z' => $total_Z,
+            'suhu_a1' => $suhu_a1,
+            'suhu_a2' => $suhu_a2,
+            'suhu_z1' => $suhu_z1,
+            'suhu_z2' => $suhu_z2,
+            'suhu_AiZi' => $suhu_AiZi,
+            'suhu_a' => $suhu_a,
+            'suhu_Z' => $suhu_Z,
+            // 'kondisi_suhu' => $kondisi_suhu,
+            'ppm_a1' => $ppm_a1,
+            'ppm_a2' => $ppm_a2,
+            'ppm_a3' => $ppm_a3,
+            'ppm_z1' => $ppm_z1,
+            'ppm_z2' => $ppm_z2,
+            'ppm_z3' => $ppm_z3,
+            'ppm_AiZi' => $ppm_AiZi,
+            'ppm_a' => $ppm_a,
+            'ppm_Z' => $ppm_Z,
+            // 'kondisi_ppm' => $kondisi_ppm,
+            'ph_a1' => $ph_a1,
+            'ph_a2' => $ph_a2,
+            'ph_a3' => $ph_a3,
+            'ph_z1' => $ph_z1,
+            'ph_z2' => $ph_z2,
+            'ph_z3' => $ph_z3,
+            'ph_AiZi' => $ph_AiZi,
+            'ph_a' => $ph_a,
+            'ph_Z' => $ph_Z,
+            // 'kondisi_ph' => $kondisi_ph,
+        ];
+
+        $data_kondisi = [
+            'st_suhu' => $st_suhu,
+            'st_ppm' => $st_ppm,
+            'st_ph' => $st_ph,
         ];
 
         dd($olah_data);
 
         $this->HitungModel->save($olah_data);
-        // KONDISI PERINTAH
+        $this->CobaModel->save($data_kondisi);
         return redirect()->to('');
     }
 
-    public function ppm($ppm)
+    public function suhu()
     {
-        // http://localhost:8080/hitungfuzzy/ppm/1222
-        // AMBIL DATA RENTANG UMUR
-        $get_ppm = $this->PpmModel->where('st_ppm', '1')->first();
-        $ppm_rendah = $get_ppm['ppm_rendah'];
-        $ppm_cukup_min = $get_ppm['ppm_cukup_min'];
-        $ppm_cukup_max = $get_ppm['ppm_cukup_max'];
-        $ppm_tinggi = $get_ppm['ppm_tinggi'];
-        // FUZZIFIKASI
-        // PPM
-        // miu ppm rndah
-        if ($ppm >= $ppm_rendah) {
-            $m_ppm_rndah = 0;
-        } elseif ($ppm_cukup_min < $ppm && $ppm < $ppm_rendah) {
-            $m_ppm_rndah = ($ppm_rendah - $ppm) / ($ppm_rendah - $ppm_cukup_min);
-        } elseif ($ppm <= $ppm_cukup_min) {
-            $m_ppm_rndah = 1;
+        $data = $this->CobaModel->orderBy('id_dht', 'DESC')->limit(1)->findAll();
+        foreach ($data as $dht) {
+            $suhu = $dht['st_suhu'];
         }
-        // miu ppm ckup
-        if ($ppm <= $ppm_cukup_min || $ppm >= $ppm_cukup_max) {
-            $m_ppm_ckup = 0;
-        } elseif ($ppm_cukup_min < $ppm && $ppm < $ppm_rendah) {
-            $m_ppm_ckup = ($ppm - $ppm_cukup_min) / ($ppm_rendah - $ppm_cukup_min);
-        } elseif ($ppm_tinggi < $ppm && $ppm < $ppm_cukup_max) {
-            $m_ppm_ckup = ($ppm_cukup_max - $ppm) / ($ppm_cukup_max - $ppm_tinggi);
-        } elseif ($ppm_rendah <= $ppm && $ppm <= $ppm_tinggi) {
-            $m_ppm_ckup = 1;
+        echo $suhu;
+    }
+
+    public function ppm()
+    {
+        $data = $this->CobaModel->orderBy('id_dht', 'DESC')->limit(1)->findAll();
+        foreach ($data as $dht) {
+            $ppm = $dht['st_ppm'];
         }
-        // miu ppm tnggi
-        if ($ppm <= $ppm_tinggi) {
-            $m_ppm_tnggi = 0;
-        } elseif ($ppm_tinggi < $ppm && $ppm < $ppm_cukup_max) {
-            $m_ppm_tnggi = ($ppm - $ppm_tinggi) / ($ppm_cukup_max - $ppm_tinggi);
-        } elseif ($ppm >= $ppm_cukup_max) {
-            $m_ppm_tnggi = 1;
+        echo $ppm;
+    }
+
+    public function ph()
+    {
+        $data = $this->CobaModel->orderBy('id_dht', 'DESC')->limit(1)->findAll();
+        foreach ($data as $dht) {
+            $ph = $dht['st_ph'];
         }
-
-        $z1 = 0;
-        $z2 = 0;
-        $z3 = 0;
-
-        $a1 = $m_ppm_rndah;
-        $z1 = 50;
-        $a2 = $m_ppm_ckup;
-        $z2 = 100;
-        $a3 = $m_ppm_tnggi;
-        $z3 = 150;
-
-        // DEFUZZYFIKASI
-        $total_AiZi = ($a1 * $z1) + ($a2 * $z2) + ($a3 * $z3);
-        $total_a = $a1 + $a2 + $a3;
-        $total_Z = $total_AiZi / $total_a;
-
-        // PENENTUAN KONDISI
-        if ($total_Z <= 50) {
-            $kondisi = 'tambahkan nutrisi';
-        } elseif ($total_Z > 50 && $total_Z < 150) {
-            $kondisi = 'kondisi ok';
-        } elseif ($total_Z > 150) {
-            $kondisi = 'tambahkan air';
-        }
-
-        $data = [
-            'm_ppm_rndah' => $m_ppm_rndah,
-            'm_ppm_ckup' => $m_ppm_ckup,
-            'm_ppm_tnggi' => $m_ppm_tnggi,
-            'a1' => $a1,
-            'a2' => $a2,
-            'a3' => $a3,
-            'z1' => $z1,
-            'z2' => $z2,
-            'z3' => $z3,
-            'total_AiZi' => $total_AiZi,
-            'total_a' => $total_a,
-            'total_Z' => $total_Z,
-            'kondisi' => $kondisi
-        ];
-
-        dd($data);
+        echo $ph;
     }
 }
