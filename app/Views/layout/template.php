@@ -8,7 +8,7 @@
     <link rel="icon" href="/assets/img/icon.ico" type="image/x-icon" />
 
     <!-- Fonts and icons -->
-    <script src="/assets/js/plugin/webfont/webfont.min.js"></script>
+    <script src="<?= base_url(); ?>/assets/js/plugin/webfont/webfont.min.js"></script>
     <script>
         WebFont.load({
             google: {
@@ -25,8 +25,9 @@
     </script>
 
     <!-- CSS Files -->
-    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/assets/css/atlantis.min.css">
+    <link rel="stylesheet" href="<?= base_url(); ?>/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="<?= base_url(); ?>/assets/css/atlantis.min.css">
+    <link rel="stylesheet" href="<?= base_url(); ?>/assets/css/sweetalert2.min.css">
 </head>
 
 <body>
@@ -34,7 +35,7 @@
         <div class="main-header">
             <!-- Logo Header -->
             <div class="logo-header" data-background-color="blue">
-                <a href="#" class="logo" style="color: white;">
+                <a href="<?= base_url(""); ?>" class="logo" style="color: white;">
                     FUZZY CABAI
                 </a>
                 <button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse" data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,9 +65,9 @@
                             <ul class="dropdown-menu dropdown-user animated fadeIn">
                                 <div class="dropdown-user-scroll scrollbar-outer">
                                     <li>
-                                        <a class="dropdown-item" href="#">My Profile</a>
+                                        <a class="dropdown-item" href="/profile">My Profile</a>
                                         <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="#">Logout</a>
+                                        <a class="dropdown-item" data-toggle="modal" data-target="#logoutModal">Logout</a>
                                     </li>
                                 </div>
                             </ul>
@@ -83,11 +84,11 @@
                 <div class="sidebar-content">
                     <ul class="nav nav-primary">
                         <li class="nav-item <?php $uri = service('uri');
-                                            if ($uri->getSegment(1) == '') {
+                                            if ($uri->getSegment(1) == 'dashboard') {
                                                 echo 'active';
                                             } ?>">
-                            <a href="<?= base_url(); ?>">
-                                <i class="fa-solid fa-droplet"></i>
+                            <a href="/dashboard">
+                                <i class="flaticon-home"></i>
                                 <p>Dashboard</p>
                             </a>
                         </li>
@@ -97,20 +98,31 @@
                                             if ($uri->getSegment(1) == 'ppm') {
                                                 echo 'active';
                                             } ?>">
-                            <a href="ppm">
-                                <i class="fa-solid fa-droplet"></i>
+                            <a href="/ppm">
+                                <i class="flaticon-pen"></i>
                                 <p>PPM</p>
                             </a>
                         </li>
                     </ul>
                     <ul class="nav nav-primary">
                         <li class="nav-item <?php $uri = service('uri');
-                                            if ($uri->getSegment(1) == 'hitungfuzzy') {
+                                            if ($uri->getSegment(1) == 'hitung') {
                                                 echo 'active';
                                             } ?>">
-                            <a href="hitungfuzzy">
-                                <i class="fa-solid fa-droplet"></i>
+                            <a href="/hitung">
+                                <i class="flaticon-analytics"></i>
                                 <p>Data Perhitungan Fuzzy</p>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav nav-primary">
+                        <li class="nav-item <?php $uri = service('uri');
+                                            if ($uri->getSegment(1) == 'logout') {
+                                                echo 'active';
+                                            } ?>">
+                            <a data-toggle="modal" data-target="#logoutModal">
+                                <i class="fa fa-sign-out-alt"></i>
+                                <p>Logout</p>
                             </a>
                         </li>
                     </ul>
@@ -120,9 +132,29 @@
         <!-- End Sidebar -->
 
         <div class="main-panel">
-            <div class="flash-data" data-flashdata="<?= session()->get('message') ?>"></div>
             <div class="content">
+                <div class="flash-data" data-flashdata="<?= session()->get('message') ?>"></div>
                 <?= $this->renderSection('content'); ?>
+
+                <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Logout</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                Apakah anda yakin ingin keluar?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                                <a href="/logout" class="btn btn-primary">Keluar</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <footer class="footer">
                 <div class="container-fluid">
@@ -134,170 +166,215 @@
         </div>
     </div>
     <!--   Core JS Files   -->
-    <script src="/assets/js/core/jquery.3.2.1.min.js"></script>
-    <script src="/assets/js/core/popper.min.js"></script>
-    <script src="/assets/js/core/bootstrap.min.js"></script>
+    <script src="<?= base_url(); ?>/assets/js/core/jquery.3.2.1.min.js"></script>
+    <script src="<?= base_url(); ?>/assets/js/core/popper.min.js"></script>
+    <script src="<?= base_url(); ?>/assets/js/core/bootstrap.min.js"></script>
 
     <!-- jQuery UI -->
-    <script src="/assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
-    <script src="/assets/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js"></script>
+    <script src="<?= base_url(); ?>/assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+    <script src="<?= base_url(); ?>/assets/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js"></script>
 
     <!-- jQuery Scrollbar -->
-    <script src="/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+    <script src="<?= base_url(); ?>/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
 
     <!-- Chart JS -->
-    <script src="/assets/js/plugin/chart.js/chart.min.js"></script>
+    <script src="<?= base_url(); ?>/assets/js/plugin/chart.js/chart.min.js"></script>
 
     <!-- jQuery Sparkline -->
-    <script src="/assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js"></script>
+    <script src="<?= base_url(); ?>/assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js"></script>
 
     <!-- Datatables -->
-    <script src="/assets/js/plugin/datatables/datatables.min.js"></script>
+    <script src="<?= base_url(); ?>/assets/js/plugin/datatables/datatables.min.js"></script>
 
     <!-- Sweet Alert -->
-    <script src="/assets/js/plugin/sweetalert/sweetalert.min.js"></script>
-    <script src="/assets/js/swal.js"></script>
+    <!-- <script src="<?= base_url(); ?>/assets/js/plugin/sweetalert/sweetalert.min.js"></script> -->
+    <script src="<?= base_url(); ?>/assets/js/sweetalert2.min.js"></script>
+    <script src="<?= base_url(); ?>/assets/js/swal.js"></script>
 
     <!-- Atlantis JS -->
-    <script src="/assets/js/atlantis.min.js"></script>
-
+    <script src="<?= base_url(); ?>/assets/js/atlantis.min.js"></script>
     <script>
-		var lineChartsuhu = document.getElementById('lineChartsuhu').getContext('2d');
-		var lineChartppm = document.getElementById('lineChartppm').getContext('2d');
-		var lineChartph = document.getElementById('lineChartph').getContext('2d');
+        var lineChartsuhu = document.getElementById('lineChartsuhu').getContext('2d');
+        var lineChartppm = document.getElementById('lineChartppm').getContext('2d');
+        var lineChartph = document.getElementById('lineChartph').getContext('2d');
 
-		var myLineChartsuhu = new Chart(lineChartsuhu, {
-			type: 'line',
-			data: {
-				labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-				datasets: [{
-					label: "Suhu Air",
-					borderColor: "#1d7af3",
-					pointBorderColor: "#FFF",
-					pointBackgroundColor: "#1d7af3",
-					pointBorderWidth: 2,
-					pointHoverRadius: 4,
-					pointHoverBorderWidth: 1,
-					pointRadius: 4,
-					backgroundColor: 'transparent',
-					fill: true,
-					borderWidth: 2,
-					data: [542, 480, 430, 550, 530, 453, 380, 434, 568, 610, 700, 900]
-				}]
-			},
-			options : {
-				responsive: true, 
-				maintainAspectRatio: false,
-				legend: {
-					position: 'bottom',
-					labels : {
-						padding: 10,
-						fontColor: '#1d7af3',
-					}
-				},
-				tooltips: {
-					bodySpacing: 4,
-					mode:"nearest",
-					intersect: 0,
-					position:"nearest",
-					xPadding:10,
-					yPadding:10,
-					caretPadding:10
-				},
-				layout:{
-					padding:{left:15,right:15,top:15,bottom:15}
-				}
-			}
-		});
+        var myLineChartsuhu = new Chart(lineChartsuhu, {
+            type: 'line',
+            data: {
+                labels: [
+                    <?php
+                    $i = 1;
+                    foreach ($nilai as $id) {
+                        echo '"' . $i++ . '"' . ', ';
+                    } ?>
+                ],
+                datasets: [{
+                    label: "Suhu",
+                    borderColor: "#1d7af3",
+                    pointBorderColor: "#FFF",
+                    pointBackgroundColor: "#1d7af3",
+                    pointBorderWidth: 2,
+                    pointHoverRadius: 4,
+                    pointHoverBorderWidth: 1,
+                    pointRadius: 4,
+                    backgroundColor: 'transparent',
+                    fill: true,
+                    borderWidth: 2,
+                    data: [
+                        <?php foreach ($nilai as $suhu) {
+                            echo $suhu['suhu'] . ', ';
+                        } ?>
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 10,
+                        fontColor: '#1d7af3',
+                    }
+                },
+                tooltips: {
+                    bodySpacing: 4,
+                    mode: "nearest",
+                    intersect: 0,
+                    position: "nearest",
+                    xPadding: 10,
+                    yPadding: 10,
+                    caretPadding: 10
+                },
+                layout: {
+                    padding: {
+                        left: 15,
+                        right: 15,
+                        top: 15,
+                        bottom: 15
+                    }
+                }
+            }
+        });
 
-		var myLineChartppm = new Chart(lineChartppm, {
-			type: 'line',
-			data: {
-				labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-				datasets: [{
-					label: "PPM Air",
-					borderColor: "#f3545d",
-					pointBorderColor: "#FFF",
-					pointBackgroundColor: "#f3545d",
-					pointBorderWidth: 2,
-					pointHoverRadius: 4,
-					pointHoverBorderWidth: 1,
-					pointRadius: 4,
-					backgroundColor: 'transparent',
-					fill: true,
-					borderWidth: 2,
-					data: [542, 480, 430, 550, 530, 453, 380, 434, 568, 610, 700, 900]
-				}]
-			},
-			options : {
-				responsive: true, 
-				maintainAspectRatio: false,
-				legend: {
-					position: 'bottom',
-					labels : {
-						padding: 10,
-						fontColor: '#f3545d',
-					}
-				},
-				tooltips: {
-					bodySpacing: 4,
-					mode:"nearest",
-					intersect: 0,
-					position:"nearest",
-					xPadding:10,
-					yPadding:10,
-					caretPadding:10
-				},
-				layout:{
-					padding:{left:15,right:15,top:15,bottom:15}
-				}
-			}
-		});
+        var myLineChartppm = new Chart(lineChartppm, {
+            type: 'line',
+            data: {
+                labels: [
+                    <?php
+                    $i = 1;
+                    foreach ($nilai as $id) {
+                        echo '"' . $i++ . '"' . ', ';
+                    } ?>
+                ],
+                datasets: [{
+                    label: "PPM",
+                    borderColor: "#59d05d",
+                    pointBorderColor: "#FFF",
+                    pointBackgroundColor: "#59d05d",
+                    pointBorderWidth: 2,
+                    pointHoverRadius: 4,
+                    pointHoverBorderWidth: 1,
+                    pointRadius: 4,
+                    backgroundColor: 'transparent',
+                    fill: true,
+                    borderWidth: 2,
+                    data: [
+                        <?php foreach ($nilai as $ppm) {
+                            echo $ppm['ppm'] . ', ';
+                        } ?>
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 10,
+                        fontColor: '#59d05d',
+                    }
+                },
+                tooltips: {
+                    bodySpacing: 4,
+                    mode: "nearest",
+                    intersect: 0,
+                    position: "nearest",
+                    xPadding: 10,
+                    yPadding: 10,
+                    caretPadding: 10
+                },
+                layout: {
+                    padding: {
+                        left: 15,
+                        right: 15,
+                        top: 15,
+                        bottom: 15
+                    }
+                }
+            }
+        });
 
-		var myLineChartph = new Chart(lineChartph, {
-			type: 'line',
-			data: {
-				labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-				datasets: [{
-					label: "PH Air",
-					borderColor: "#59d05d",
-					pointBorderColor: "#FFF",
-					pointBackgroundColor: "#59d05d",
-					pointBorderWidth: 2,
-					pointHoverRadius: 4,
-					pointHoverBorderWidth: 1,
-					pointRadius: 4,
-					backgroundColor: 'transparent',
-					fill: true,
-					borderWidth: 2,
-					data: [542, 480, 430, 550, 530, 453, 380, 434, 568, 610, 700, 900]
-				}]
-			},
-			options : {
-				responsive: true, 
-				maintainAspectRatio: false,
-				legend: {
-					position: 'bottom',
-					labels : {
-						padding: 10,
-						fontColor: '#59d05d',
-					}
-				},
-				tooltips: {
-					bodySpacing: 4,
-					mode:"nearest",
-					intersect: 0,
-					position:"nearest",
-					xPadding:10,
-					yPadding:10,
-					caretPadding:10
-				},
-				layout:{
-					padding:{left:15,right:15,top:15,bottom:15}
-				}
-			}
-		});
-	</script>
+        var myLineChartph = new Chart(lineChartph, {
+            type: 'line',
+            data: {
+                labels: [
+                    <?php
+                    $i = 1;
+                    foreach ($nilai as $id) {
+                        echo '"' . $i++ . '"' . ', ';
+                    } ?>
+                ],
+                datasets: [{
+                    label: "PH",
+                    borderColor: "#6861ce",
+                    pointBorderColor: "#FFF",
+                    pointBackgroundColor: "#6861ce",
+                    pointBorderWidth: 2,
+                    pointHoverRadius: 4,
+                    pointHoverBorderWidth: 1,
+                    pointRadius: 4,
+                    backgroundColor: 'transparent',
+                    fill: true,
+                    borderWidth: 2,
+                    data: [
+                        <?php foreach ($nilai as $ph) {
+                            echo $ph['ph'] . ', ';
+                        } ?>
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 10,
+                        fontColor: '#6861ce',
+                    }
+                },
+                tooltips: {
+                    bodySpacing: 4,
+                    mode: "nearest",
+                    intersect: 0,
+                    position: "nearest",
+                    xPadding: 10,
+                    yPadding: 10,
+                    caretPadding: 10
+                },
+                layout: {
+                    padding: {
+                        left: 15,
+                        right: 15,
+                        top: 15,
+                        bottom: 15
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>

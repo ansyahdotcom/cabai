@@ -19,7 +19,8 @@
                                         <th>No.</th>
                                         <th>Rentang Umur</th>
                                         <th>Rendah</th>
-                                        <th>Cukup</th>
+                                        <th>Cukup minimal</th>
+                                        <th>Cukup maksimal</th>
                                         <th>Tinggi</th>
                                         <th>Status</th>
                                         <th>Aksi</th>
@@ -35,7 +36,8 @@
                                             <td><?= $i++; ?></td>
                                             <td><?= $ppm['umur']; ?></td>
                                             <td><?= $ppm['ppm_rendah']; ?></td>
-                                            <td><?= $ppm['ppm_cukup']; ?></td>
+                                            <td><?= $ppm['ppm_cukup_min']; ?></td>
+                                            <td><?= $ppm['ppm_cukup_max']; ?></td>
                                             <td><?= $ppm['ppm_tinggi']; ?></td>
                                             <td>
                                                 <button type="button" class="btn <?= ($ppm['st_ppm'] == 1) ? 'btn-warning' : 'btn-secondary' ?> btn-sm" data-toggle="modal" data-target="#stppm<?= $id_ppm ?>">
@@ -80,16 +82,12 @@
                         <input type="text" id="umur" name="umur" class="form-control" placeholder="Contoh : 14 - 28 HST" autocomplete="off" required>
                     </div>
                     <div class="form-group">
-                        <label for="ppm_rendah">PPM Rendah</label>
-                        <input type="text" id="ppm_rendah" name="ppm_rendah" class="form-control" placeholder="Isikan hanya angka" autocomplete="off" required>
+                        <label for="ppm_cukup_min">PPM Minimal</label>
+                        <input type="number" id="ppm_cukup_min" name="ppm_cukup_min" class="form-control" placeholder="Isikan hanya angka" autocomplete="off" required>
                     </div>
-                    <div class="form-group">
-                        <label for="ppm_cukup">PPM Cukup</label>
-                        <input type="text" id="ppm_cukup" name="ppm_cukup" class="form-control" placeholder="Isikan hanya angka" autocomplete="off" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="ppm_tinggi">PPM Tinggi</label>
-                        <input type="text" id="ppm_tinggi" name="ppm_tinggi" class="form-control" placeholder="Isikan hanya angka" autocomplete="off" required>
+                    <div class="form-group">`
+                        <label for="ppm_cukup_max">PPM Maksimal</label>
+                        <input type="number" id="ppm_cukup_max" name="ppm_cukup_max" class="form-control" placeholder="Isikan hanya angka" autocomplete="off" required>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -104,11 +102,11 @@
 foreach ($data_ppm as $ppm) :
     $id_ppm = $ppm['id_ppm'];
     $umur = $ppm['umur'];
-    $ppm_rendah = $ppm['ppm_rendah'];
-    $ppm_cukup = $ppm['ppm_cukup'];
-    $ppm_tinggi = $ppm['ppm_tinggi'];
+    $ppm_cukup_min = $ppm['ppm_cukup_min'];
+    $ppm_cukup_max = $ppm['ppm_cukup_max'];
     $st_ppm = $ppm['st_ppm'];
 ?>
+    <!-- Modal aktifkan PPM -->
     <div class="modal fade" id="stppm<?= $id_ppm; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -142,29 +140,26 @@ foreach ($data_ppm as $ppm) :
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ubah Status PPM</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Ubah Data PPM</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="ppm/tambah" method="post">
+                <form action="ppm/ubah" method="post">
                     <div class="modal-body">
                         <?= csrf_field(); ?>
                         <div class="form-group">
                             <label for="umur">Rentang Umur</label>
                             <input type="text" id="umur" name="umur" class="form-control" placeholder="Contoh : 14 - 28 HST" autocomplete="off" required value="<?= $umur; ?>">
+                            <input type="hidden" id="id_ppm" name="id_ppm" value="<?= $id_ppm; ?>">
                         </div>
                         <div class="form-group">
-                            <label for="ppm_rendah">PPM Rendah</label>
-                            <input type="text" id="ppm_rendah" name="ppm_rendah" class="form-control" placeholder="Isikan hanya angka" autocomplete="off" required value="<?= $ppm_rendah; ?>">
+                            <label for="ppm_cukup_min">PPM Minimal</label>
+                            <input type="number" id="ppm_cukup_min" name="ppm_cukup_min" class="form-control" placeholder="Isikan hanya angka" autocomplete="off" required value="<?= $ppm_cukup_min; ?>">
                         </div>
                         <div class="form-group">
-                            <label for="ppm_cukup">PPM Cukup</label>
-                            <input type="text" id="ppm_cukup" name="ppm_cukup" class="form-control" placeholder="Isikan hanya angka" autocomplete="off" required value="<?= $ppm_cukup; ?>">
-                        </div>
-                        <div class="form-group">
-                            <label for="ppm_tinggi">PPM Tinggi</label>
-                            <input type="text" id="ppm_tinggi" name="ppm_tinggi" class="form-control" placeholder="Isikan hanya angka" autocomplete="off" required value="<?= $ppm_tinggi; ?>">
+                            <label for="ppm_cukup_max">PPM Maksimal</label>
+                            <input type="number" id="ppm_cukup_max" name="ppm_cukup_max" class="form-control" placeholder="Isikan hanya angka" autocomplete="off" required value="<?= $ppm_cukup_max; ?>">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -180,12 +175,12 @@ foreach ($data_ppm as $ppm) :
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Hapus PPM</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Hapus Data PPM</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="ppm/ubah_stppm" method="post">
+                <form action="ppm/hapus" method="post">
                     <div class="modal-body">
                         <?= csrf_field(); ?>
                         <p>Apakah Anda yakin akan menghapus data <b><?= $umur; ?></b>?</p>

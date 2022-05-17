@@ -3,7 +3,7 @@ $(function() {
         toast: true,
         position: 'top',
         showConfirmButton: false,
-        timer: 3000
+        timer: 2500
     });
 
     const flashData = $('.flash-data').data('flashdata');
@@ -17,7 +17,7 @@ $(function() {
             icon: 'success',
             title: 'Anda berhasil logout'
         });
-    } else if(flashData == 'change_passwd') {
+    } else if(flashData == 'ubah_passwd') {
         Toast.fire({
             icon: 'success',
             title: 'Password berhasil diubah'
@@ -25,12 +25,12 @@ $(function() {
     } else if(flashData == 'wrong_passwd') {
         Toast.fire({
             icon: 'error',
-            title: 'Maaf password salah!'
+            title: 'Maaf password tidak sesuai!'
         });
-    } else if(flashData == 'wrong_oldpasswd') {
+    } else if(flashData == 'wrong_user') {
         Toast.fire({
             icon: 'error',
-            title: 'Maaf Password Lama Salah!'
+            title: 'Maaf username tidak sesuai!'
         });
     } else if(flashData == 'belum_terdaftar') {
         Toast.fire({
@@ -64,8 +64,8 @@ $(function() {
         });
     } else if (flashData == 'ubah_stppm') {
         Toast.fire({
-            icon: 'error',
-            title: 'Pilihan PPM tidak boleh semuanya nonaktif!',
+            icon: 'success',
+            title: 'Pilihan ppm berhasil diubah',
         });
     }
 });

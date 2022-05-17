@@ -59,6 +59,8 @@ class HitungModel extends Model
         'total_AiZi',
         'total_a',
         'total_Z',
+        'id_knd',
+        'id_awal',
         'created_ht'
     ];
 }

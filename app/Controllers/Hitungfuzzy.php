@@ -376,31 +376,43 @@ class Hitungfuzzy extends BaseController
         $this->CobaModel->save($data_kondisi);
         return redirect()->to('');
     }
+    
+        // // INFERENSI SUHU
+        // $suhu_a1 = $m_suhu_dngin;
+        // $suhu_z1 = 50;
+        // $suhu_a2 = $m_suhu_nrmal;
+        // $suhu_z2 = 100;
+        // $suhu_a3 = $m_suhu_pnas;
+        // $suhu_z3 = 150;
 
-    public function suhu()
-    {
-        $data = $this->CobaModel->orderBy('id_dht', 'DESC')->limit(1)->findAll();
-        foreach ($data as $dht) {
-            $suhu = $dht['st_suhu'];
-        }
-        echo $suhu;
-    }
+        // // DEFUZZYFIKASI SUHU
+        // $suhu_AiZi = ($suhu_a1 * $suhu_z1) + ($suhu_a2 * $suhu_z2) + ($suhu_a3 * $suhu_z3);
+        // $suhu_a = $suhu_a1 + $suhu_a2 + $suhu_a3;
+        // $suhu_Z = $suhu_AiZi / $suhu_a;
 
-    public function ppm()
-    {
-        $data = $this->CobaModel->orderBy('id_dht', 'DESC')->limit(1)->findAll();
-        foreach ($data as $dht) {
-            $ppm = $dht['st_ppm'];
-        }
-        echo $ppm;
-    }
+        // // INFERENSI PPM
+        // $ppm_a1 = $m_ppm_rndah;
+        // $ppm_z1 = 50;
+        // $ppm_a2 = $m_ppm_ckup;
+        // $ppm_z2 = 100;
+        // $ppm_a3 = $m_ppm_tnggi;
+        // $ppm_z3 = 150;
 
-    public function ph()
-    {
-        $data = $this->CobaModel->orderBy('id_dht', 'DESC')->limit(1)->findAll();
-        foreach ($data as $dht) {
-            $ph = $dht['st_ph'];
-        }
-        echo $ph;
-    }
+        // // DEFUZZYFIKASI PPM
+        // $ppm_AiZi = ($ppm_a1 * $ppm_z1) + ($ppm_a2 * $ppm_z2) + ($ppm_a3 * $ppm_z3);
+        // $ppm_a = $ppm_a1 + $ppm_a2 + $ppm_a3;
+        // $ppm_Z = $ppm_AiZi / $ppm_a;
+
+        // // INFERENSI PH
+        // $ph_a1 = $m_ph_asam;
+        // $ph_z1 = 50;
+        // $ph_a2 = $m_ph_ntral;
+        // $ph_z2 = 100;
+        // $ph_a3 = $m_ph_basa;
+        // $ph_z3 = 150;
+
+        // // DEFUZZYFIKASI PH
+        // $ph_AiZi = ($ph_a1 * $ph_z1) + ($ph_a2 * $ph_z2) + ($ph_a3 * $ph_z3);
+        // $ph_a = $ph_a1 + $ph_a2 + $ph_a3;
+        // $ph_Z = $ph_AiZi / $ph_a;
 }
