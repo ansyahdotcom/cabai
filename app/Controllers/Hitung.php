@@ -27,7 +27,7 @@ class Hitung extends BaseController
         ];
         return view('v_perhitungan', $data);
     }
-    /*
+
     public function hitung($suhu, $ppm, $ph)
     {
         // http://localhost:8080/hitung/hitung/24/1230/6
@@ -36,7 +36,7 @@ class Hitung extends BaseController
             'ppm' => $ppm,
             'ph' => $ph
         ];
-        $this->NilaiAwalModel->save($data_awal);
+        // $this->NilaiAwalModel->save($data_awal);
 
         // AMBIL DATA RENTANG PPM
         $get_ppm = $this->PpmModel->where('st_ppm', '1')->first();
@@ -304,17 +304,14 @@ class Hitung extends BaseController
             'z26' => $z26,
             'z27' => $z27,
         ];
-
-        $this->HitungModel->save($olah_data);
-        echo $total_Z;
-        echo '11';
+        dd($olah_data);
+        // $this->HitungModel->save($olah_data);
     }
-    */
 
-    public function hitung($suhu, $ppm, $ph)
+    public function reset_data()
     {
-        echo $suhu;
-        echo $ppm;
-        echo $ph;
+        $this->HitungModel->emptyTable('hitung_fuzzy');
+        $this->NilaiAwalModel->emptyTable('nilai_awal');
+        return redirect()->to('/hitung');
     }
 }
